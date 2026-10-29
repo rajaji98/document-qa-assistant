@@ -319,60 +319,70 @@ Open the retrieval evaluation and chunk-inspection view to examine retrieved pas
 
 ---
 
-## 📊 Retrieval Evaluation
+##  🧪 Retrieval Evaluation
 
-Retrieval quality is important because the language model can only use the context provided to it effectively. If relevant passages are not retrieved, the generated answer may be incomplete or inaccurate.
+The Document Q&A Assistant includes a retrieval evaluation dashboard to measure how effectively the system retrieves relevant document chunks for a user's question.
 
-The application includes a dashboard for evaluating retrieval quality.
+The evaluation focuses on three metrics: **Hit Rate, Mean Reciprocal Rank (MRR), and Precision@K**.
 
-### 1. Hit Rate
+### 1. Hit Rate — Did the system find relevant information?
 
-Hit Rate measures the proportion of test queries for which at least one relevant item appears in the retrieved results.
+Hit Rate checks whether at least one relevant document chunk appears in the retrieved results for a query.
 
-\[
-\text{Hit Rate} =
-\frac{\text{Queries with a relevant result}}{\text{Total queries}}
-\]
+**Example:**
 
-A higher Hit Rate indicates that relevant content is being found for more test queries.
+Suppose we test the application with 10 questions. For 8 questions, the system retrieves at least one relevant chunk.
 
-### 2. Mean Reciprocal Rank (MRR)
+**Result: Hit Rate = 80%**
 
-MRR measures how highly the first relevant result is ranked across a set of queries.
+This means the retriever found relevant information for 8 out of 10 test questions.
 
-\[
-\text{MRR} =
-\frac{1}{N}\sum_{i=1}^{N}\frac{1}{r_i}
-\]
+### 2. Mean Reciprocal Rank (MRR) — How high was the first relevant result?
 
-Here, \(N\) is the number of evaluated queries, and \(r_i\) is the rank of the first relevant result for query \(i\). If no relevant result is retrieved for a query, its reciprocal-rank contribution is zero.
+MRR measures how close to the top the first relevant retrieved chunk appears.
 
-A higher MRR indicates that relevant results tend to appear nearer the top.
+**Example:**
 
-### 3. Precision@K
+- **Question 1:** The first relevant chunk appears at rank 1.
+- **Question 2:** The first relevant chunk appears at rank 2.
+- **Question 3:** The first relevant chunk appears at rank 4.
 
-Precision@K measures the fraction of the top K retrieved items that are relevant.
+The system receives a better score when relevant information appears near the top of the results. If no relevant chunk is retrieved, that query contributes zero to MRR.
 
-\[
-\text{Precision@K} =
-\frac{\text{Relevant items in the top K}}{K}
-\]
+**Why it matters:** A higher MRR means users are more likely to find useful information among the first few retrieved chunks.
 
-For example, if 3 of the top 5 retrieved chunks are relevant:
+### 3. Precision@K — How many of the top results were relevant?
 
-\[
-\text{Precision@5} = \frac{3}{5} = 0.60
-\]
+Precision@K measures the proportion of the top K retrieved chunks that are relevant to the question.
 
-This corresponds to 60% precision at 5.
+**Example:**
 
-### Why These Metrics Matter
+Suppose the retriever returns 5 chunks for a question:
 
-- **Hit Rate:** Checks whether relevant content is retrieved at all.
-- **MRR:** Measures how early the first relevant result appears.
-- **Precision@K:** Measures the relevance of the top K retrieved results.
+- 3 chunks are relevant.
+- 2 chunks are not relevant.
 
-The metrics evaluate retrieval performance, not the overall factual correctness of every generated answer. Results also depend on the evaluation queries and the relevance labels assigned to retrieved content.
+**Result: Precision@5 = 60%**
+
+This means 3 out of the 5 retrieved chunks were relevant.
+
+**Why it matters:** It helps evaluate whether the system is retrieving useful context instead of adding unnecessary or unrelated text.
+
+### 📊 What Do These Metrics Tell Us?
+
+| Metric | What it evaluates | A good result indicates |
+|---|---|---|
+| Hit Rate | Whether relevant content was found | Relevant content is found for more queries |
+| MRR | Position of the first relevant result | Relevant content appears closer to the top |
+| Precision@K | Relevance of the top K results | A greater proportion of retrieved chunks are relevant |
+
+### Why Retrieval Evaluation Matters
+
+In a RAG application, the quality of the retrieved context influences the quality of the generated answer. If the retriever misses relevant information, the language model may produce an incomplete or unsupported response.
+
+These metrics help analyze the retrieval component and identify opportunities to improve search quality.
+
+**Note:** Retrieval metrics evaluate the retrieved results, not the factual correctness of every generated answer. Results depend on the test questions and the relevance labels used during evaluation.
 
 ---
 
